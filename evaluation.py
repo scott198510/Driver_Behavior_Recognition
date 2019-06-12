@@ -5,6 +5,7 @@
 # You have been warned!
 
 from driver_behavior import DriverBehavior
+import time
 
 def save_to_file(text='test'):
     with open('stats.txt','a') as f:
@@ -23,16 +24,15 @@ if __name__ == '__main__':
     
     # the madness begins
     for n in range(2, 52):
-    print('Currently on iteration N = ', n)
-    for name in db.models.keys():
-        print('Training with', name)
-        selected_indices = [indices_map[k] for k in top_features[:n]]
-        
-        db.train(name, selected_features=selected_indices)
-    print('Testing train_accuracy on all trained models')
-    train_acc = db.train_accuracy(force_update=True, selected_features=selected_indices)
-    print('Testing test_accuracy on all trained models')
-    test_acc = db.test_accuracy(force_update=True, selected_features=selected_indices)
-    results[n] = {'train':train_acc, 'test':test_acc}
-    save_to_file('{}: {}'.format(n , results[n]))
+        print('{} currently on iteration N = {}'.format(time.strftime('%Y-%m-%d %X'), n))
+        for name in db.models.keys():
+            print('{} training with {}'.format(time.strftime('%Y-%m-%d %X'),name))
+            selected_indices = [indices_map[k] for k in top_features[:n]] # column number list
+            db.train(name, selected_features=selected_indices) # specified classifier model & column feature
+        print('{} testing train_accuracy on all trained models'.format(time.strftime('%Y-%m-%d %X')))
+        train_acc = db.train_accuracy(force_update=True, selected_features=selected_indices)
+        print('{} testing test_accuracy on all trained models'.format(time.strftime('%Y-%m-%d %X')))
+        test_acc = db.test_accuracy(force_update=True, selected_features=selected_indices)
+        results[n] = {'train':train_acc, 'test':test_acc}
+        save_to_file('{}: {}'.format(n , results[n]))
     
